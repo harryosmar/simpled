@@ -1,0 +1,9 @@
+@import "../bootstrap/3.2.0/css/bootstrap.css";
+@import "http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all";
+@import "../../frontend/css/site.css";
+
+html, body{
+    background: transparent !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}

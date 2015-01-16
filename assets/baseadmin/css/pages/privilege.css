@@ -1,0 +1,12 @@
+#privilege-result button{
+    font-size: 12px;
+}
+.update-feedback{
+    font-size: 20px;
+    padding: 3px 0px;
+    display: block;
+    float: left;
+}
+.loading-text{
+    font-size: 17px;
+}
