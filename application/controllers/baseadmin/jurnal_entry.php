@@ -19,6 +19,36 @@ class Jurnal_entry extends  Datatable{
     	parent::index();
     }
 
+    public function edit($primary_key = 0){
+        if($this->input->is_ajax_request()){
+            header('Content-Type: application/json');
+        }else{
+            $this->page_css[] = $this->_assets_css."pages/jurnal_entry.css";
+            $this->page_js[] = $this->_assets_js."pages/jurnal_entry.js";
+            
+            $this->set_assets();
+
+            $json_data = array(
+                    'dropdown_coa' => form_dropdown('coa_id[]', create_form_dropdown_options($this->db->query("SELECT coa_id, CONCAT(coa_number, '-', description, '-', crdr) AS `coa_label` FROM coa")->result_array(), 'coa_id', 'coa_label'), 'coa_id', 'class="form-control"'),
+                    'disabled_amount' => '<input type="text" class="form-control" name="amount[]" disabled="disabled" placeholder="Enter Amount" data-a-sign="" data-a-dec="." data-a-sep=",">',
+                    'enabled_amount' => '<div class="input-group"><div class="input-group-addon">{0}</div><input type="text" class="form-control" name="amount[]" placeholder="Amount" data-currency-id="{1}" data-crdr="{2}" data-a-sign="" data-a-dec="." data-a-sep=","></div>',
+                    'currencies' => $this->Currency_model->get_result_pk_as_index(),
+                    'coas' => $this->Coa_model->get_result_pk_as_index(),
+                    'action' => 'add',
+                    'db' => array(
+                        'head' => $this->Jurnal_entry_model->get_row_by_primary_key($primary_key)->row_array() ,
+                        'detail' => $this->Jurnal_entry_model->get_jurnal_detail_by_primary_key($primary_key)->result_array()
+                    )
+            );
+
+            $this->view->set(array(
+                'json_data' => $json_data
+            ));
+
+            $this->view->content("pages/jurnal_entry_edit");
+        }
+    }
+
     public function add(){
         if($this->input->is_ajax_request()){
             header('Content-Type: application/json');
