@@ -32,7 +32,7 @@ class Jurnal_entry extends  Datatable{
                 array(
                     'field' => 'ref_number',
                     'label' => 'Ref Number',
-                    'rules' => 'xss_clean|trim|required'
+                    'rules' => 'xss_clean|trim|required|is_unique[jurnal.ref_number]'
                 ),
                 array(
                     'field' => 'remarks',
