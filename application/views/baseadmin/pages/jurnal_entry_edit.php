@@ -10,7 +10,7 @@
 	<div class="col-md-12"> 
 		<div class="widget stacked ">
 			<div class="widget-header">
-				<h3><?php echo $json_data['db']['head']['ref_number']; ?></h3>
+				<h3 data-placed="ref_number"><?php echo $json_data['db']['head']['ref_number']; ?></h3>
 	        </div>
 			<div class="widget-content">
 				
@@ -28,6 +28,7 @@
 					        </li>
 					    </ul>
 					    <div class="tab-content">
+					    	<input type="hidden" id="transaction_id" value="<?php echo $json_data['db']['head']['transaction_id']; ?>">
 					        <div class="tab-pane active" id="tab_0">
 					        	<div class="col-md-7">
 						            <div class="form-group clearfix">
@@ -48,6 +49,13 @@
 									      	<textarea class="form-control" id="remarks" placeholder="Remarks"><?php echo $json_data['db']['head']['remarks']; ?></textarea>
 									    </div>
 									</div>
+									<div class="form-group clearfix">
+									    <label for="remarks" class="col-sm-2 control-label">Status</label>
+									    <div class="col-sm-10">
+									      	<?php echo $json_data['dropdown_transaction_status']; ?>
+									    </div>
+									</div>
+									<button class="btn btn-submit btn-success" data-loading-text="Loading..." id="save-header-jurnal">Update</button>
 								</div>
 					        </div>
 					        <div class="tab-pane" id="tab_1">
@@ -69,6 +77,7 @@
 											<tfoot></tfoot>
 										</table>
 									</div>
+									<button class="btn btn-block btn-lg btn-submit btn-success" data-loading-text="Loading..." id="save-detail-jurnal">Update</button>
 								</div>
 					        </div>
 					    </div>
