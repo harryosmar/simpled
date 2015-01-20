@@ -178,47 +178,29 @@ class Crud extends Datatable {
      * @desc : REMOVE, Form & Process POST
      * @param : POST variable
      */
-    public function remove($primary_key = 0) {
-        $this->load->library('form_validation');
-        $_POST["{$this->primary_key}"] = $primary_key;
-        $this->form_validation->set_rules($this->primary_key, ucwords(preg_replace("/_/", " ", $this->primary_key)), 'required|callback_primary_id_check');
-        if ($this->form_validation->run() == FALSE) {
-            $this->view->set(array('err_title' => '<span class="text-danger">Invalid Data</span>', 'err_msg' => validation_errors('<p class="text-danger">', '</p>')));
-            $this->view->content("error");
-        } else {
-            $this->db->delete($this->_table, array(
-                $this->primary_key => $this->input->post("{$this->primary_key}")
-            ));
-
-            $this->session->set_flashdata("msg", '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button> <span class="glyphicon glyphicon-remove-sign"></span>&nbsp;Successfully Delete Your Data</div>');
-            redirect("{$this->class_url}");
+    public function delete($primary_key = 0) {
+        if ($this->input->is_ajax_request()){
+            header('Content-Type: application/json');
+            $this->load->library('form_validation');
+            $_POST[$this->primary_key] = $primary_key;
+            $this->form_validation->set_rules($this->primary_key, ucwords(preg_replace("/_/", " ", $this->primary_key)), 'required|callback_primary_id_check['.$this->primary_key.']');
+            if ($this->form_validation->run() == FALSE) {
+                echo json_encode(array(
+                    'status' => 'error',
+                    'msg' => validation_errors()
+                ));
+            } else {
+                $this->db->delete($this->_table, array(
+                    $this->primary_key => $primary_key
+                ));
+                echo json_encode(array(
+                    'status' => 'success',
+                    'msg' => 'Successfully delete record',
+                    'action' => 'show_delete_msg'
+                ));
+            }
+            unset($_POST[$this->primary_key]);
         }
-
-//        if (!$this->input->is_ajax_request() && !isset($_POST['submit'])) { //Direct View
-//            $this->view->set(array('err_title' => 'Dissalowed Access', 'err_msg' => 'Direct access not allowed for this url'));
-//            $this->view->content("error");
-//        } else if (($this->input->is_ajax_request() && !isset($_POST['submit']))) { //JSON View
-//            $this->form_validation->set_rules($this->primary_key, ucwords(preg_replace("/_/", " ", $this->primary_key)), 'required|callback_primary_id_check');
-//            if ($this->form_validation->run() == FALSE) {
-//                echo json_encode(array("status" => "error", "msg" => validation_errors('<p class="text-error">', '</p>')));
-//            } else {
-//                echo json_encode(array(
-//                    'status' => 'success',
-//                    'data' => sprintf('<input type="hidden" name="%s" id="%s" value="%s"><p class="text-center"><span class="glyphicon glyphicon-trash"></span> Are you sure want to delete this record ?</p>', $this->primary_key, $this->primary_key, $this->input->post("{$this->primary_key}"))
-//                ));
-//            }
-//        } else { //POST submitted
-//            $this->db->delete($this->_table, array(
-//                $this->primary_key => $this->input->post("{$this->primary_key}")
-//            ));
-//
-//            unset($_POST["submit"]);
-//
-//            echo json_encode(array(
-//                'status' => 'success',
-//                'msg' => '<span class="glyphicon glyphicon-remove-sign"></span>&nbsp;Successfully Delete Your Data'
-//            ));
-//        }
     }
 
     /**

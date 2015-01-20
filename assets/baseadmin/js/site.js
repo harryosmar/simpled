@@ -67,7 +67,7 @@ var site = {
     },
     on_finish_ajax: function(json) {
         if (typeof (json.action) !== "undefined") {
-            this[json.action]();
+            this[json.action](json);
         }
     },
     growl_msg: function(type, title, text){

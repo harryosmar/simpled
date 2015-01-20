@@ -10,10 +10,59 @@ class Coa extends Crud {
         parent::__construct();
     }
 
+    protected function init(){
+        $this->load->model('Coa_type_model');
+        $this->load->model('Currency_model');
+        parent::init();
+    }
+
     public function index(){
     	$this->page_css[] = $this->_assets_css."pages/coa.css";
     	$this->page_js[] = $this->_assets_js."pages/coa.js";
     	parent::index();
+    }
+
+    protected function datatable_customize_columns() {
+        $this->Coa_type_model;
+
+        $this->columns[0]["visible"] = FALSE;
+        $this->columns[2]["label"] = 'COA Type';
+        $this->columns[2]["type"] = 'enum';
+        $this->columns[2]["enums"] = $this->Coa_type_model->get_options('coa_type_name', 'coa_type_id');
+        $this->columns[3]["label"] = 'Currency';
+        $this->columns[3]["type"] = 'enum';
+        $this->columns[3]["enums"] = $this->Currency_model->get_options('currency_label', 'currency_id');
+        $this->columns[5]["label"] = 'CR/DR';
+        $this->columns[6]["label"] = 'Status';
+        //echo "<pre>"; print_r($this->columns); die;
+        return $this->columns;
+    }
+
+    protected function datatable_field_record_formatter($field, $val, $column_index) {
+        if ($field == 'coa_type_id') {
+            return $this->db->query("SELECT coa_type_name FROM coa_type WHERE coa_type_id = ?", array($val))->row()->coa_type_name;
+        } elseif($field == 'currency_id'){
+            return $this->db->query("SELECT currency_label FROM currency WHERE currency_id = ?", array($val))->row()->currency_label;
+        }else {
+            return parent::datatable_field_record_formatter($field, $val, $column_index);
+        }
+    }
+
+    protected function datatable_customize_actions($row) {
+        return $this->view->load("pages/coa_action", array('primary_key' => $this->primary_key, 'row' => $row), TRUE);
+    }
+
+
+    protected function set_form_validation($field, $action) {
+        if($field['db'] == 'coa_type_id'){
+            return "xss_clean|required|integer|callback_check_coa_type_id";
+        }elseif($field['db'] == 'coa_number' && $action == 'add'){
+            return "xss_clean|required|max_length[{$field["field_data"]["max_length"]}]|is_unique[coa.coa_number]";
+        }elseif($field['db'] == 'coa_number' && $action == 'edit'){
+            return "xss_clean|required|max_length[{$field["field_data"]["max_length"]}]|callback_coa_number_for_edit";
+        }else{
+            return parent::set_form_validation($field, $action);
+        }
     }
 
     protected function set_input_form($row, $field) {
@@ -46,18 +95,6 @@ class Coa extends Crud {
             return FALSE;
         } else {
             return TRUE;
-        }
-    }
-
-    protected function set_form_validation($field, $action) {
-        if($field['db'] == 'coa_type_id'){
-        	return "xss_clean|required|integer|callback_check_coa_type_id";
-        }elseif($field['db'] == 'coa_number' && $action == 'add'){
-            return "xss_clean|required|max_length[{$field["field_data"]["max_length"]}]|is_unique[coa.coa_number]";
-        }elseif($field['db'] == 'coa_number' && $action == 'edit'){
-            return "xss_clean|required|max_length[{$field["field_data"]["max_length"]}]|callback_coa_number_for_edit";
-        }else{
-        	return parent::set_form_validation($field, $action);
         }
     }
 

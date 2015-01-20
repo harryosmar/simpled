@@ -13,6 +13,35 @@ class Jurnal_entry extends  Datatable{
         $this->load->model("Currency_model");
     }
 
+    protected function init(){
+        $this->load->model('User_model');
+        parent::init();
+    }
+
+    protected function datatable_customize_columns() {
+        $this->load->model("User_group_model");
+
+        $this->columns[0]["visible"] = FALSE;
+        $this->columns[4]["label"] = 'Input By';
+        $this->columns[4]["type"] = 'enum';
+        $this->columns[4]["enums"] = $this->User_model->get_options('user_fullname', 'user_id');
+        //echo "<pre>"; print_r($this->columns); die;
+        return $this->columns;
+    }
+
+    protected function datatable_field_record_formatter($field, $val, $column_index) {
+        //echo "<pre>"; print_r($this->columns); die;
+        if ($field == 'created_by') {
+            return $this->db->query("SELECT user_fullname FROM user WHERE user_id = ?", array($val))->row()->user_fullname;
+        } else {
+            return parent::datatable_field_record_formatter($field, $val, $column_index);
+        }
+    }
+
+    protected function datatable_customize_actions($row) {
+        return $this->view->load_path_reset("plugins/crud/action", array('primary_key' => $this->primary_key, 'row' => $row), TRUE);
+    }
+
     public function index(){
     	//$this->page_css[] = $this->_assets_css."pages/jurnal_entry.css";
     	//$this->page_js[] = $this->_assets_js."pages/jurnal_entry.js";
@@ -20,33 +49,47 @@ class Jurnal_entry extends  Datatable{
     }
 
     public function edit($primary_key = 0){
-        $this->page_css[] = $this->_assets_css."pages/jurnal_entry.css";
-        $this->page_js[] = $this->_assets_js."pages/jurnal_entry.js";
-        
-        $this->set_assets();
+        $this->load->library('form_validation');
+        $_POST["{$this->primary_key}"] = $primary_key; //set primary key value from method segment to POST data, so form_validation runs it process
+        $this->form_validation->set_rules($this->primary_key, ucwords(preg_replace("/_/", " ", $this->primary_key)), 'required|callback_primary_id_check'); //Check if the primary key value is valid or not
+        if ($this->form_validation->run() == FALSE) { //Primary Key Value is not valid
+            $responce = array(
+                'status' => 'error',
+                'msg' => validation_errors('<p class="text-error">', '</p>'),
+                'data' => ''
+            );
+            $this->view->set(array('err_title' => 'Invalid Data', 'err_msg' => 'Page not found Invalid data'));
+            $this->view->content("error");
+        }else{
+            $this->page_css[] = $this->_assets_css."pages/jurnal_entry.css";
+            $this->page_js[] = $this->_assets_js."pages/jurnal_entry.js";
+            
+            $this->set_assets();
 
-        $jurnal_head = $this->Jurnal_entry_model->get_row_by_primary_key($primary_key)->row_array();
-        $jurnal_detail = $this->Jurnal_entry_model->get_jurnal_detail_by_primary_key($primary_key)->result_array();
-        $json_data = array(
-                'dropdown_coa' => form_dropdown('coa_id[]', create_form_dropdown_options($this->db->query("SELECT coa_id, CONCAT(coa_number, '-', description, '-', crdr) AS `coa_label` FROM coa")->result_array(), 'coa_id', 'coa_label'), 'coa_id', 'class="form-control"'),
-                'disabled_amount' => '<input type="text" class="form-control" name="amount[]" disabled="disabled" placeholder="Enter Amount" data-a-sign="" data-a-dec="." data-a-sep=",">',
-                'enabled_amount' => '<div class="input-group"><div class="input-group-addon">{0}</div><input type="text" class="form-control" name="amount[]" placeholder="Amount" data-currency-id="{1}" data-crdr="{2}" data-a-sign="" data-a-dec="." data-a-sep=","></div>',
-                'enabled_amount_with_value' => '<div class="input-group"><div class="input-group-addon">{0}</div><input type="text" class="form-control" name="amount[]" placeholder="Amount" data-currency-id="{1}" data-crdr="{2}" value="{3}" data-a-sign="" data-a-dec="." data-a-sep=","></div>',
-                'currencies' => $this->Currency_model->get_result_pk_as_index(),
-                'coas' => $this->Coa_model->get_result_pk_as_index(),
-                'action' => 'edit',
-                'dropdown_transaction_status' => form_dropdown('transaction_status', $this->Jurnal_entry_model->get_enum_values('transaction_status'), $jurnal_head['transaction_status'], 'id="transaction_status" class="form-control"'),
-                'db' => array(
-                    'head' =>  $jurnal_head,
-                    'detail' => $jurnal_detail
-                )
-        );
+            $jurnal_head = $this->Jurnal_entry_model->get_row_by_primary_key($primary_key)->row_array();
+            $jurnal_detail = $this->Jurnal_entry_model->get_jurnal_detail_by_primary_key($primary_key)->result_array();
+            $json_data = array(
+                    'dropdown_coa' => form_dropdown('coa_id[]', create_form_dropdown_options($this->db->query("SELECT coa_id, CONCAT(coa_number, '-', description, '-', crdr) AS `coa_label` FROM coa")->result_array(), 'coa_id', 'coa_label'), 'coa_id', 'class="form-control"'),
+                    'disabled_amount' => '<input type="text" class="form-control" name="amount[]" disabled="disabled" placeholder="Enter Amount" data-a-sign="" data-a-dec="." data-a-sep=",">',
+                    'enabled_amount' => '<div class="input-group"><div class="input-group-addon">{0}</div><input type="text" class="form-control" name="amount[]" placeholder="Amount" data-currency-id="{1}" data-crdr="{2}" data-a-sign="" data-a-dec="." data-a-sep=","></div>',
+                    'enabled_amount_with_value' => '<div class="input-group"><div class="input-group-addon">{0}</div><input type="text" class="form-control" name="amount[]" placeholder="Amount" data-currency-id="{1}" data-crdr="{2}" value="{3}" data-a-sign="" data-a-dec="." data-a-sep=","></div>',
+                    'currencies' => $this->Currency_model->get_result_pk_as_index(),
+                    'coas' => $this->Coa_model->get_result_pk_as_index(),
+                    'action' => 'edit',
+                    'dropdown_transaction_status' => form_dropdown('transaction_status', $this->Jurnal_entry_model->get_enum_values('transaction_status'), $jurnal_head['transaction_status'], 'id="transaction_status" class="form-control"'),
+                    'db' => array(
+                        'head' =>  $jurnal_head,
+                        'detail' => $jurnal_detail
+                    )
+            );
 
-        $this->view->set(array(
-            'json_data' => $json_data
-        ));
+            $this->view->set(array(
+                'json_data' => $json_data
+            ));
 
-        $this->view->content("pages/jurnal_entry_edit");
+            $this->view->content("pages/jurnal_entry_edit");
+        }
+        unset($_POST["{$this->primary_key}"]);
     }
 
     public function add(){
@@ -255,13 +298,51 @@ class Jurnal_entry extends  Datatable{
             }
             else{
                 $this->db->trans_commit();
-                echo json_encode(array('status'=>'success', 'msg' => 'Successfully add new jurnal'));
+                echo json_encode(array('status'=>'success', 'msg' => 'Successfully update jurnal'));
             }
         }
     }
 
-    protected function datatable_customize_actions($row) {
-        return $this->view->load_path_reset("plugins/crud/action", array('primary_key' => $this->primary_key, 'row' => $row), TRUE);
+    public function view($primary_key = 0){
+        $this->load->library('form_validation');
+        $_POST["{$this->primary_key}"] = $primary_key; //set primary key value from method segment to POST data, so form_validation runs it process
+        $this->form_validation->set_rules($this->primary_key, ucwords(preg_replace("/_/", " ", $this->primary_key)), 'required|callback_primary_id_check'); //Check if the primary key value is valid or not
+        if ($this->form_validation->run() == FALSE) { //Primary Key Value is not valid
+            $responce = array(
+                'status' => 'error',
+                'msg' => validation_errors('<p class="text-error">', '</p>'),
+                'data' => ''
+            );
+            $this->view->set(array('err_title' => 'Invalid Data', 'err_msg' => 'Page not found Invalid data'));
+            $this->view->content("error");
+        }else{
+            $this->page_css[] = $this->_assets_css."pages/jurnal_entry.css";
+            $this->page_js[] = $this->_assets_js."pages/jurnal_entry.js";
+            
+            $this->set_assets();
+
+            
+
+            $this->view->set(array(
+                //'json_data' => $json_data
+            ));
+
+            $this->view->content("pages/jurnal_entry_detail");
+        }
+        unset($_POST["{$this->primary_key}"]);
+    }
+
+    public function primary_id_check($value) {
+        $this->db->select("COUNT(1) AS `count`");
+        $this->db->from($this->_table);
+        $this->db->where(array($this->primary_key => $value));
+        $count = $this->db->get()->row()->count;
+        if ($count == 0) {
+            $this->form_validation->set_message('primary_id_check', 'The %s field is not valid');
+            return FALSE;
+        } else {
+            return TRUE;
+        }
     }
 
 }

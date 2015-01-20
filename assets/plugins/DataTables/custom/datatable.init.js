@@ -251,8 +251,9 @@ var datatable = {
         //datatable.oTable.clearPipeline().draw();// redraw datatable
         //datatable.oTable.AjaxUpdate(oTable.settt);
         //alert(datatable.oTable.fnReloadAjax);
-        datatable.oTable.fnReloadAjax();
+        //datatable.oTable.fnReloadAjax();
         //location.reload();
+        datatable.oTable.ajax.reload();
     },
     confirmDelete : function(elm){
         var self = this;
@@ -275,6 +276,11 @@ var datatable = {
                 self.ajax_request(href);
             }
         });
+    },
+    show_delete_msg : function(json){
+        var self = this;
+        self.refresh_datatable();
+        self.growl_msg(json.status, json.status, json.msg);
     }
 };
 
