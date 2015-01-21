@@ -303,6 +303,32 @@ class Jurnal_entry extends  Datatable{
         }
     }
 
+     public function delete($primary_key = 0) {
+        if ($this->input->is_ajax_request()){
+            header('Content-Type: application/json');
+            $this->load->library('form_validation');
+            $_POST[$this->primary_key] = $primary_key;
+            $this->form_validation->set_rules($this->primary_key, ucwords(preg_replace("/_/", " ", $this->primary_key)), 'required|callback_primary_id_check['.$this->primary_key.']|callback_is_already_used');
+            if ($this->form_validation->run() == FALSE) {
+                echo json_encode(array(
+                    'status' => 'error',
+                    'msg' => validation_errors(),
+                    'action' => 'show_delete_msg'
+                ));
+            } else {
+                $this->db->delete('jurnal', array(
+                    'transaction_id' => $primary_key
+                ));
+                echo json_encode(array(
+                    'status' => 'success',
+                    'msg' => 'Successfully delete record',
+                    'action' => 'show_delete_msg'
+                ));
+            }
+            unset($_POST[$this->primary_key]);
+        }
+    }
+
     public function view($primary_key = 0){
         $this->load->library('form_validation');
         $_POST["{$this->primary_key}"] = $primary_key; //set primary key value from method segment to POST data, so form_validation runs it process
@@ -310,21 +336,37 @@ class Jurnal_entry extends  Datatable{
         if ($this->form_validation->run() == FALSE) { //Primary Key Value is not valid
             $responce = array(
                 'status' => 'error',
-                'msg' => validation_errors('<p class="text-error">', '</p>'),
-                'data' => ''
+                'msg' => validation_errors('<p class="text-error">', '</p>')
             );
             $this->view->set(array('err_title' => 'Invalid Data', 'err_msg' => 'Page not found Invalid data'));
             $this->view->content("error");
         }else{
+            $this->load->model('User_model');
             $this->page_css[] = $this->_assets_css."pages/jurnal_entry.css";
             $this->page_js[] = $this->_assets_js."pages/jurnal_entry.js";
             
             $this->set_assets();
 
-            
+            $jurnal_head = $this->Jurnal_entry_model->get_row_by_primary_key($primary_key)->row_array();
+            $jurnal_head['input_by'] = $this->User_model->get_row_by_primary_key($jurnal_head['created_by'])->row()->user_fullname;
+            $jurnal_detail = $this->Jurnal_entry_model->get_jurnal_detail_by_primary_key_complete($primary_key)->result_array();
+            $json_data = array(
+                    //'dropdown_coa' => form_dropdown('coa_id[]', create_form_dropdown_options($this->db->query("SELECT coa_id, CONCAT(coa_number, '-', description, '-', crdr) AS `coa_label` FROM coa")->result_array(), 'coa_id', 'coa_label'), 'coa_id', 'class="form-control"'),
+                    //'disabled_amount' => '<input type="text" class="form-control" name="amount[]" disabled="disabled" placeholder="Enter Amount" data-a-sign="" data-a-dec="." data-a-sep=",">',
+                    //'enabled_amount' => '<div class="input-group"><div class="input-group-addon">{0}</div><input type="text" class="form-control" name="amount[]" placeholder="Amount" data-currency-id="{1}" data-crdr="{2}" data-a-sign="" data-a-dec="." data-a-sep=","></div>',
+                    //'enabled_amount_with_value' => '<div class="input-group"><div class="input-group-addon">{0}</div><input type="text" class="form-control" name="amount[]" placeholder="Amount" data-currency-id="{1}" data-crdr="{2}" value="{3}" data-a-sign="" data-a-dec="." data-a-sep=","></div>',
+                    'currencies' => $this->Currency_model->get_result_pk_as_index(),
+                    'coas' => $this->Coa_model->get_result_pk_as_index(),
+                    'action' => 'view',
+                    //'dropdown_transaction_status' => form_dropdown('transaction_status', $this->Jurnal_entry_model->get_enum_values('transaction_status'), $jurnal_head['transaction_status'], 'id="transaction_status" class="form-control"'),
+                    'db' => array(
+                        'head' =>  $jurnal_head,
+                        'detail' => $jurnal_detail
+                    )
+            );
 
             $this->view->set(array(
-                //'json_data' => $json_data
+                'json_data' => $json_data
             ));
 
             $this->view->content("pages/jurnal_entry_detail");

@@ -10,3 +10,10 @@
 .loading-text{
     font-size: 17px;
 }
+[name='checkbox-per-menu']{
+	float: none !important;
+	margin-left: 0px !important;
+}
+#checkuncheck-all{
+	margin-left: 0px !important;
+}
