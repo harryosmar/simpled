@@ -7,7 +7,7 @@
         <h4 class="modal-title" >Customize Menu Icon</h4>
       </div>
       <div class="modal-body">
-        <input type="hidden">
+        <input type="hidden" name="menu_id" value="">
         <ul class="the-icons clearfix">
             <li><i class="icon-glass"></i> icon-glass</li>
             <li><i class="icon-music"></i> icon-music</li>

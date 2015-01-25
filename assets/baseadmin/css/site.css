@@ -1,0 +1,8 @@
+ul.breadcrumb .dropdown{
+	display: inline-block;
+}
+ul.breadcrumb [data-toggle=dropdown]{
+	border: none;
+	background-color: transparent;
+	color:#428bca;
+}

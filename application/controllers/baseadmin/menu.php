@@ -89,7 +89,7 @@ class Menu extends Crud {
         if ($field == 'menu_segment') {
             return sprintf('<a href="%s">%s</a>', "{$this->template_url}{$val}", $val);
         } elseif($field == 'menu_icon'){
-            return sprintf('<a href="javascript:;" data-name="update-menu-icon" data-menu-id="%d" style="cursor:pointer;"><i class="%s"></i></a>', $row->menu_id, $val);
+            return sprintf('<a href="javascript:;" data-name="update-menu-icon" data-menu-id="%d" data-menu-icon="%s" style="cursor:pointer;"><i class="%s"></i></a>', $row->menu_id, $val, $val);
         }else {
             return parent::datatable_field_record_formatter($field, $val, $column_index, $row);
         }
@@ -104,6 +104,33 @@ class Menu extends Crud {
             'status' => 'success',
             'data' => '<select class="form-control" name="menu_parent_id" id="menu_parent_id">' . '<option value="0">New Parent</option>' . $this->{$this->model_name}->generate_menu_option_dropdown() . '<select>'
         ));
+    }
+
+    public function update_menu_icon(){
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('menu_id', 'Menu Id', 'xss_clean|required|callback_primary_id_check');
+        $this->form_validation->set_rules('menu_icon', 'Menu Icon', 'xss_clean|required');
+        if ($this->form_validation->run() == FALSE) {
+            echo json_encode(array(
+                    'status' => 'error',
+                    'msg' => validation_errors()
+                ));
+        } else {
+            //update menu data
+            $this->db->update('menu', array(
+                'menu_icon' => $this->input->post('menu_icon')
+            ), array('menu_id' => $this->input->post('menu_id')));
+
+            //reset menu navbar
+            $this->reset_subnavbar();
+
+            echo json_encode(array(
+                    'status' => 'success',
+                    'msg' => 'Successfully update menu icon',
+                    'subnavbar' => $this->view->get('subnavbar'),
+                    'action' => 'onCompleteUpdateMenu'
+                ));
+        }
     }
 
 }

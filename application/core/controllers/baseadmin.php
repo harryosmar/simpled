@@ -46,6 +46,11 @@ class Baseadmin extends Core {
         $this->view->set("subnavbar", $this->session->userdata('subnavbar'));
     }
 
+    protected function reset_subnavbar(){
+        $this->session->set_userdata('subnavbar', $this->Menu_model->generate_subnavbar_menu());
+        $this->view->set("subnavbar", $this->session->userdata('subnavbar'));
+    }
+
     protected function check_authenticate() {
         if (!$this->session->userdata('user')) {
             if ($this->input->is_ajax_request()) {//if ajax request => session not exist, reload current page

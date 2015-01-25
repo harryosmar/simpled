@@ -126,11 +126,11 @@ class Menu_model extends Core_model {
             if($row->menu_parent_id == 0 && $count == 0){
                 $return .= sprintf('<li class="parentmenu"><a data-menu-segment="%s" href="%s"><i class="icon-home"></i><span>%s</span></a></li>', $row->menu_segment, $link_url, $row->menu_name);
             }else if($row->menu_parent_id == 0 && $count > 0){
-                $return .= sprintf('<li class="dropdown parentmenu"><a data-menu-segment="%s" href="%s" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-th"></i><span>%s</span><b class="caret"></b></a><ul class="dropdown-menu">%s</ul></li>', $row->menu_segment, $link_url, $row->menu_name, $this->generate_subnavbar_menu($row->menu_id));
+                $return .= sprintf('<li class="dropdown parentmenu"><a data-menu-segment="%s" href="%s" class="dropdown-toggle" data-toggle="dropdown"><i class="%s"></i><span>%s</span><b class="caret"></b></a><ul class="dropdown-menu">%s</ul></li>', $row->menu_segment, $link_url, $row->menu_icon, $row->menu_name, $this->generate_subnavbar_menu($row->menu_id));
             }else if($row->menu_parent_id != 0 && $count == 0){
-                $return .= sprintf('<li><a data-menu-segment="%s" href="%s">%s</a></li>', $row->menu_segment, $link_url, $row->menu_name);
+                $return .= sprintf('<li><a data-menu-segment="%s" href="%s"><i class="%s"></i> %s</a></li>', $row->menu_segment, $link_url, $row->menu_icon, $row->menu_name);
             }else if($row->menu_parent_id != 0 && $count > 0){
-                $return .= sprintf('<li class="dropdown-submenu"><a data-menu-segment="%s" tabindex="-1" href="%s">%s</a><ul class="dropdown-menu">%s</ul></li>', $row->menu_segment, $link_url, $row->menu_name, $this->generate_subnavbar_menu($row->menu_id));
+                $return .= sprintf('<li class="dropdown-submenu"><a data-menu-segment="%s" tabindex="-1" href="%s">%s</a><ul class="dropdown-menu"><i class="%s"></i> %s</ul></li>', $row->menu_segment, $link_url, $row->menu_name, $row->menu_icon, $this->generate_subnavbar_menu($row->menu_id));
             }
         }
 
@@ -173,7 +173,20 @@ class Menu_model extends Core_model {
             $row = $this->db->get()->row();
 
             //set link breadcrumb
-            $return .= sprintf('<li><a href="%s">%s</a> <i class="fa fa-angle-right"></i> </li>', preg_match("/^YES$/i", $row->menu_link) ? "{$this->view->get("template_url")}{$row->menu_segment}" : 'javascript:;', ucwords(preg_replace("/_/", "", $row->menu_name)));
+            if(preg_match("/^YES$/i", $row->menu_link)){
+                $return .= sprintf('<li><a href="%s">%s</a> <i class="fa fa-angle-right"></i> </li>', "{$this->view->get("template_url")}{$row->menu_segment}", ucwords(preg_replace("/_/", "", $row->menu_name)));
+            }else{
+                $menu_name = sprintf('<div class="dropdown">
+                      <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        %s
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        %s
+                      </ul>
+                    </div>', $row->menu_name, $this->get_child_dropdown_menu_item($row->menu_id));
+                $return .= sprintf('<li>%s <i class="fa fa-angle-right"></i> </li>', $menu_name);
+            }
 
             //call recursive
             if ($row->menu_parent_id != 0) {
@@ -183,6 +196,19 @@ class Menu_model extends Core_model {
 
         return $return;
     }
+
+    public function get_child_dropdown_menu_item($menu_parent_id){
+        $this->db->select('*');
+        $this->db->from('menu');
+        $this->db->where(array('menu_parent_id' => $menu_parent_id));
+        $result = $this->db->get()->result();
+        $menu_items = '';
+        foreach ($result as $row) {
+            $menu_items .= sprintf('<li role="presentation"><a role="menuitem" tabindex="-1" href="%s">%s</a></li>', "{$this->view->get("template_url")}{$row->menu_segment}", $row->menu_name);
+        }
+        return $menu_items;
+    }
+
 
 }
 
