@@ -191,7 +191,7 @@ class Datatable extends Baseadmin {
     protected function datatable_record_formatter($row) {
         $counter = 0;
         foreach ($row as $field => $val) {
-            $row->$field = $this->datatable_field_record_formatter($field, $val, $counter);
+            $row->$field = $this->datatable_field_record_formatter($field, $val, $counter, $row);
             $counter++;
         }
         return $row;
@@ -204,7 +204,7 @@ class Datatable extends Baseadmin {
      * @param field
      * @override
      */
-    protected function datatable_field_record_formatter($field, $val, $column_index) {
+    protected function datatable_field_record_formatter($field, $val, $column_index, $row = null) {
         if (preg_match("/^date$/i", $this->columns[$column_index]['type'])) {
             return format_date($val);
         } else if (preg_match("/^datetime$/i", $this->columns[$column_index]['type'])) {
