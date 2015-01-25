@@ -1,0 +1,15 @@
+.the-icons {
+	margin-left: 0;
+	list-style: none;
+}
+.the-icons li {
+	float: left;
+	width: 50%;
+	line-height: 25px;
+	margin-bottom: 5px;
+	cursor: pointer;
+}
+.the-icons li:hover, .the-icons li:focus{
+	font-weight: 900;
+	color:#337ab7;
+}

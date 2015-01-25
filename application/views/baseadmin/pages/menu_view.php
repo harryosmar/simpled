@@ -6,6 +6,7 @@
 		<div class="widget-content">
 			<?php $this->view->load("breadcrumb"); ?>
 			<?php $this->view->load_path_reset("plugins/datatables/table"); ?>
+			<?php $this->view->load("pages/menu/icon_panel"); ?>
 		</div>
 	</div>
 </div>

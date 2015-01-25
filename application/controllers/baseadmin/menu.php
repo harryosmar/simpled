@@ -16,6 +16,12 @@ class Menu extends Crud {
         parent::__construct();
     }
 
+    public function index() {
+        $this->page_js[] = "{$this->_assets_js}pages/menu.js";
+        $this->page_css[] = "{$this->_assets_css}pages/menu.css";
+        parent::index();
+    }
+
     public function remove($primary_key = 0) {
         $this->load->library('form_validation');
         $_POST["{$this->primary_key}"] = $primary_key;
@@ -79,11 +85,13 @@ class Menu extends Crud {
         return $this->columns;
     }
 
-    protected function datatable_field_record_formatter($field, $val, $column_index) {
+    protected function datatable_field_record_formatter($field, $val, $column_index, $row) {
         if ($field == 'menu_segment') {
             return sprintf('<a href="%s">%s</a>', "{$this->template_url}{$val}", $val);
-        } else {
-            return parent::datatable_field_record_formatter($field, $val, $column_index);
+        } elseif($field == 'menu_icon'){
+            return sprintf('<a href="javascript:;" data-name="update-menu-icon" data-menu-id="%d" style="cursor:pointer;"><i class="%s"></i></a>', $row->menu_id, $val);
+        }else {
+            return parent::datatable_field_record_formatter($field, $val, $column_index, $row);
         }
     }
 
