@@ -94,11 +94,8 @@ class Crud extends Datatable {
                 //Update database
                 $this->db->update($this->_table, $_POST, array($this->primary_key => $this->input->post("{$this->primary_key}")));
 
-                //Return responce in json format
-                echo json_encode(array(
-                    'status' => 'success',
-                    'msg' => '<span class="glyphicon glyphicon-ok-sign"></span>&nbsp;Successfully Update Your Data'
-                ));
+                echo json_encode($this->on_sucess('edit'));
+
             } else { //Validation Error
                 //Setting error validation foreach field
                 $form_error = array();
@@ -150,12 +147,10 @@ class Crud extends Datatable {
                 $this->db->insert($this->_table, $_POST);
                 $insert_id = $this->db->insert_id();
 
-                //Return responce in json format
-                echo json_encode(array(
-                    'status' => 'success',
-                    'msg' => '<span class="glyphicon glyphicon-ok-sign"></span>&nbsp;Successfully Submit Your Data',
-                    'insert_id' => $insert_id
-                ));
+                $return = $this->on_sucess('add');
+                $return['insert_id'] = $insert_id;
+                echo json_encode($return);
+              
             } else { //Validation Error
                 //Setting error validation foreach field
                 $form_error = array();
@@ -193,13 +188,42 @@ class Crud extends Datatable {
                 $this->db->delete($this->_table, array(
                     $this->primary_key => $primary_key
                 ));
-                echo json_encode(array(
+
+                echo json_encode($this->on_sucess('delete'));
+
+               
+            }
+            unset($_POST[$this->primary_key]);
+        }
+    }
+
+    protected function on_sucess($action){
+        switch ($action) {
+            case 'delete':
+                return array(
                     'status' => 'success',
                     'msg' => 'Successfully delete record',
                     'action' => 'show_delete_msg'
-                ));
-            }
-            unset($_POST[$this->primary_key]);
+                );
+                break;
+            case 'add':
+                return array(
+                    'status' => 'success',
+                    'msg' => '<span class="glyphicon glyphicon-ok-sign"></span>&nbsp;Successfully Submit Your Data'
+                );
+                break;
+             case 'edit':
+                return array(
+                    'status' => 'success',
+                    'msg' => '<span class="glyphicon glyphicon-ok-sign"></span>&nbsp;Successfully Update Your Data'
+                );
+                break;
+            default:
+                return array(
+                    'status' => 'error',
+                    'msg' => 'Invalid Action'
+                );
+                break;
         }
     }
 
