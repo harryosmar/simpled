@@ -22,7 +22,7 @@ class Menu extends Crud {
         parent::index();
     }
 
-    public function remove($primary_key = 0) {
+    /*public function remove($primary_key = 0) {
         $this->load->library('form_validation');
         $_POST["{$this->primary_key}"] = $primary_key;
         $this->form_validation->set_rules($this->primary_key, ucwords(preg_replace("/_/", " ", $this->primary_key)), 'required|callback_primary_id_check');
@@ -41,6 +41,71 @@ class Menu extends Crud {
             $this->session->set_flashdata("msg", '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button> <span class="glyphicon glyphicon-remove-sign"></span>&nbsp;Successfully Delete Your Data</div>');
             redirect("{$this->class_url}");
         }
+    }*/
+
+    public function delete($primary_key = 0) {
+        if ($this->input->is_ajax_request()){
+            header('Content-Type: application/json');
+            $this->load->library('form_validation');
+            $_POST[$this->primary_key] = $primary_key;
+            $this->form_validation->set_rules($this->primary_key, ucwords(preg_replace("/_/", " ", $this->primary_key)), 'required|callback_primary_id_check['.$this->primary_key.']');
+            if ($this->form_validation->run() == FALSE) {
+                echo json_encode(array(
+                    'status' => 'error',
+                    'msg' => validation_errors()
+                ));
+            } else {
+                //START FIX menu Tree
+                $row = $this->{$this->model_name}->get_row_by_primary_key($primary_key)->row();
+                $this->db->update($this->_table, array('menu_parent_id' => $row->menu_parent_id), array('menu_parent_id' => $primary_key));
+                //END FIX menu Tree
+
+                $this->db->delete($this->_table, array(
+                    $this->primary_key => $primary_key
+                ));
+
+                echo json_encode($this->on_sucess('delete'));
+            }
+            unset($_POST[$this->primary_key]);
+        }
+    }
+
+     protected function on_sucess($action){
+        $return = parent::on_sucess($action);
+        $this->reset_subnavbar(); //reset menu navbar
+        $return['subnavbar'] = $this->view->get('subnavbar');
+
+        return $return;
+    }
+
+
+    protected function set_form_validation($field, $action) {
+        if($field['db'] == 'menu_segment' && $action == 'add' && preg_match("/^YES$/i", $this->input->post('menu_link'))){
+            return "xss_clean|required|max_length[{$field["field_data"]["max_length"]}]|is_unique[menu.menu_segment]";
+        }elseif($field['db'] == 'menu_segment' && $action == 'edit' && preg_match("/^YES$/i", $this->input->post('menu_link'))){
+            return "xss_clean|required|max_length[{$field["field_data"]["max_length"]}]|callback_menu_segment_for_edit";
+        }elseif(preg_match("/^menu_segment$/i", $field["db"]) && preg_match("/^NO$/i", $this->input->post('menu_link'))){
+            return "xss_clean";
+        }elseif (preg_match("/^menu_action$/i", $field["db"])) {
+            return "xss_clean";
+        }else{
+            return parent::set_form_validation($field, $action);
+        }
+    }
+
+    public function menu_segment_for_edit($menu_segment){
+        //$this->load->model('Menu_model');
+        $row = $this->Menu_model->get_by_field(array(
+            'menu_segment' => $menu_segment,
+            'menu_id <> ' => $this->input->post('menu_id')
+        ))->row();
+
+        if (!empty($row)) {
+            $this->form_validation->set_message('menu_segment_for_edit', 'The %s field is already used');
+            return FALSE;
+        } else {
+            return TRUE;
+        }
     }
 
     protected function set_crud_asset() {
@@ -51,16 +116,6 @@ class Menu extends Crud {
         $this->page_css[] = "{$this->_general_assets}plugins/jquery-tags-input/jquery.tagsinput.css";
         $this->view->set("page_css", $this->page_css);
         $this->view->set("page_js", $this->page_js);
-    }
-
-    protected function set_form_validation($field, $action) {
-        if (preg_match("/^menu_segment$/i", $field["db"]) && preg_match("/^NO$/i", $this->input->post('menu_link'))) {
-            return "xss_clean";
-        } else if (preg_match("/^menu_action$/i", $field["db"])) {
-            return "xss_clean";
-        } else {
-            return parent::set_form_validation($field, $action);
-        }
     }
 
     protected function set_input_form($row, $field) {

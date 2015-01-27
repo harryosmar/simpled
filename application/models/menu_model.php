@@ -130,7 +130,7 @@ class Menu_model extends Core_model {
             }else if($row->menu_parent_id != 0 && $count == 0){
                 $return .= sprintf('<li><a data-menu-segment="%s" href="%s"><i class="%s"></i> %s</a></li>', $row->menu_segment, $link_url, $row->menu_icon, $row->menu_name);
             }else if($row->menu_parent_id != 0 && $count > 0){
-                $return .= sprintf('<li class="dropdown-submenu"><a data-menu-segment="%s" tabindex="-1" href="%s">%s</a><ul class="dropdown-menu"><i class="%s"></i> %s</ul></li>', $row->menu_segment, $link_url, $row->menu_name, $row->menu_icon, $this->generate_subnavbar_menu($row->menu_id));
+                $return .= sprintf('<li class="dropdown-submenu"><a data-menu-segment="%s" tabindex="-1" href="%s"><i class="%s"></i> %s</a><ul class="dropdown-menu"> %s</ul></li>', $row->menu_segment, $link_url, $row->menu_icon, $row->menu_name, $this->generate_subnavbar_menu($row->menu_id));
             }
         }
 

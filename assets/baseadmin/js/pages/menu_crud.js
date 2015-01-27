@@ -31,6 +31,7 @@ var menu_crud = {
         if (typeof (json.insert_id) !== "undefined") {
             self.reload_menu_parent_id();
         }
+        $('ul.mainnav').html(json.subnavbar); //update  subnavbar
     },
     reload_menu_parent_id: function() {
         var self = this;
