@@ -190,7 +190,7 @@ class Menu_model extends Core_model {
 
             //call recursive
             if ($row->menu_parent_id != 0) {
-                $return .= $this->get_breadcrumb_parent($row->menu_segment);
+                $return = $this->get_breadcrumb_parent($row->menu_segment).$return;
             }
         }
 
