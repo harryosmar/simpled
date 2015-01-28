@@ -40,14 +40,24 @@ class Baseadmin extends Core {
     protected function set_subnavbar() {
         //die('<ul class="mainnav">'.$this->Menu_model->generate_subnavbar_menu().'</ul>');
         if (!$this->session->userdata('subnavbar')) { //set side bar menu html to session, to reduce database load
-            $this->session->set_userdata('subnavbar', $this->Menu_model->generate_subnavbar_menu());
+            $this->session->set_userdata('subnavbar', '<li class="parentmenu">
+                        <a href="'.$this->template_url.'" data-menu-segment="index">
+                            <i class="icon-home"></i>
+                            <span>Home</span>
+                        </a>                        
+                    </li>'.$this->Menu_model->generate_subnavbar_menu());
         }
         //$this->view->set("sidebar_menu", $this->Menu_model->generate_sidebar_menu());
         $this->view->set("subnavbar", $this->session->userdata('subnavbar'));
     }
 
     protected function reset_subnavbar(){
-        $this->session->set_userdata('subnavbar', $this->Menu_model->generate_subnavbar_menu());
+        $this->session->set_userdata('subnavbar', '<li class="parentmenu">
+                        <a href="'.$this->template_url.'" data-menu-segment="index">
+                            <i class="icon-home"></i>
+                            <span>Home</span>
+                        </a>                        
+                    </li>'.$this->Menu_model->generate_subnavbar_menu());
         $this->view->set("subnavbar", $this->session->userdata('subnavbar'));
     }
 

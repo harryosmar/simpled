@@ -13,13 +13,6 @@
             <div class="collapse subnav-collapse">
                 <ul class="mainnav">
                 
-                    <li class="parentmenu">
-                        <a href="<?php echo $template_url; ?>" data-menu-segment="index">
-                            <i class="icon-home"></i>
-                            <span>Home</span>
-                        </a>                        
-                    </li>
-                    
                     <?php echo $subnavbar; ?>
                 
                 </ul>
