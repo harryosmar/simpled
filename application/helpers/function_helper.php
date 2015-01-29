@@ -41,7 +41,7 @@ function format_date($date = false, $format = 'd M Y') {
  * 
  */
 function format_number($number) {
-    return number_format(!empty($number) ? $number : 0, 0, '.', ',');
+    return number_format(!empty($number) ? $number : 0, 2, '.', ',');
 }
 
 /**
