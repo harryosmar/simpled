@@ -16,7 +16,7 @@
                     <?php if ($key == 2): ?>
                         <a href="<?php echo "{$template_url}{$breadcrumb->menu_segment}"; ?>"><?php echo $menu_name; ?></a>
                     <?php else: ?>
-                        <a href="<?php echo "{$template_url}{$breadcrumb->menu_segment}/{$val}"; ?>"><?php echo ucwords(preg_replace("/_/", "", $val)); ?></a>
+                        <a href="javascript:;" style="color:#333;"><?php echo ucwords(preg_replace("/_/", "", $val)); ?></a>
                     <?php endif; ?>
                     <?php echo $count_segment > $key ? ' <i class="fa fa-angle-right"></i> ' : '' ?>
                 </li>
@@ -25,3 +25,4 @@
     </ul>
     <!-- END PAGE TITLE & BREADCRUMB--> 
 <?php endif; ?>
+<?php //echo '<pre>'; print_r($segment_arr); ?>

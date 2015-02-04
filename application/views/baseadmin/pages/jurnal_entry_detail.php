@@ -36,7 +36,7 @@
 					</tr>
 				</thead>
 			</table>
-			<div class="">
+			<div class="clearfix row" style="margin-left:-15px;">
 
 				<div class="col-md-6">
 					<table class="table table-bordered table-condensed table-stripped">
