@@ -1,0 +1,19 @@
+.filter-ledger .form-control{
+	width: auto;
+}
+.filter-ledger .datepicker, .filter-ledger .btn-group{
+	margin-left:15px; display:inline-block;
+}
+#data-result{
+	margin-top: 20px;
+}
+#data-result th{
+	vertical-align: middle;
+}
+#loading-filter{
+	display: none;
+	margin-left: 15px;
+}
+#proceed-all .glyphicon, [data-name="proceed-item"] .glyphicon{
+	margin-right: 5px;
+}

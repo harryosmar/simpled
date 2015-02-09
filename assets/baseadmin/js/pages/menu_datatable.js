@@ -7,6 +7,12 @@ var menu_datatable = {
             self.datatable();
         }
         /*END INIT PARENT JS*/
+    },
+    show_delete_msg : function(json){
+        var self = this;
+        self.refresh_datatable();
+        self.growl_msg(json.status, json.status, json.msg);
+        $('ul.mainnav').html(json.subnavbar); //update  subnavbar
     }
 };
 

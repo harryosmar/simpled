@@ -40,8 +40,8 @@ function format_date($date = false, $format = 'd M Y') {
  * @return number-formated
  * 
  */
-function format_number($number) {
-    return number_format(!empty($number) ? $number : 0, 2, '.', ',');
+function format_number($number, $decimal_digit = 2) {
+    return number_format(!empty($number) ? $number : 0, $decimal_digit, '.', ',');
 }
 
 /**

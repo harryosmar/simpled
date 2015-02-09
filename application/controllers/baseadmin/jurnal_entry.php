@@ -25,6 +25,7 @@ class Jurnal_entry extends  Datatable{
         $this->columns[4]["label"] = 'Input By';
         $this->columns[4]["type"] = 'enum';
         $this->columns[4]["enums"] = $this->User_model->get_options('user_fullname', 'user_id');
+        //$this->columns[7]["visible"] = FALSE;
         //echo "<pre>"; print_r($this->columns); die;
         return $this->columns;
     }
@@ -33,13 +34,15 @@ class Jurnal_entry extends  Datatable{
         //echo "<pre>"; print_r($this->columns); die;
         if ($field == 'created_by') {
             return $this->db->query("SELECT user_fullname FROM user WHERE user_id = ?", array($val))->row()->user_fullname;
-        } else {
+        } elseif($field == 'posted'){
+            return sprintf('%s %s', $val == 'YES' ? '<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>' : '', $val);
+        }else {
             return parent::datatable_field_record_formatter($field, $val, $column_index);
         }
     }
 
     protected function datatable_customize_actions($row) {
-        return $this->view->load_path_reset("plugins/crud/action", array('primary_key' => $this->primary_key, 'row' => $row), TRUE);
+        return $this->view->load("pages/jurnal_entry/action", array('primary_key' => $this->primary_key, 'row' => $row), TRUE);
     }
 
     public function index(){
@@ -381,6 +384,18 @@ class Jurnal_entry extends  Datatable{
         $count = $this->db->get()->row()->count;
         if ($count == 0) {
             $this->form_validation->set_message('primary_id_check', 'The %s field is not valid');
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+
+    public function is_already_used($value){
+        $this->db->select("posted");
+        $this->db->from($this->_table);
+        $this->db->where(array($this->primary_key => $this->input->post($this->primary_key)));
+        if ($this->db->get()->row()->posted == 'YES') {
+            $this->form_validation->set_message('is_already_used', 'The %s field is already posted');
             return FALSE;
         } else {
             return TRUE;
