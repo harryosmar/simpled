@@ -34,8 +34,10 @@ class Ledger extends  Datatable{
     }
 
     public function get_list_ledger($export=false){
-        if(!export){
+        if($export === false){
             header('Content-Type: application/json');
+        }else{
+            $_POST = $_GET;
         }
         
         $this->load->library('form_validation');
@@ -63,7 +65,7 @@ class Ledger extends  Datatable{
         );
         $this->form_validation->set_rules($config);
         if ($this->form_validation->run() == FALSE) {
-            if(!$export){
+            if($export === false){
                 echo json_encode(array('status' => 'error', 'msg' => validation_errors()));
             }else{
                 redirect("{$this->template_url}ledger");
@@ -86,10 +88,10 @@ class Ledger extends  Datatable{
                 }else{
                     $coa->balance = 0;
                 }
-                $coa->table = $this->view->load('pages/ledger/list_jurnal', array('ledgers' => $ledgers, 'coa' => $coa),  TRUE);
+                $coa->table = $this->view->load('pages/ledger/list_jurnal', array('ledgers' => $ledgers, 'coa' => $coa, 'export' => $export),  TRUE);
             }
 
-            if(!$export){
+            if($export === false){
                 echo json_encode(array(
                     'status' => 'success', 
                     'data' => $coas,
@@ -99,8 +101,9 @@ class Ledger extends  Datatable{
                 // ....
             }else if($export == 'PDF'){
                 $this->load->library('Mypdf');
-                $this->mypdf->initialize(array('pdf_header_title' => 'SimpLed', 'pdf_header_string' => 'SimpLed : Simple Ledger Application'));
-                $this->mypdf->generate($this->view->load('pages/ledger/report_pdf', array('ledgers' => $ledgers), TRUE), "SimpLedLedger.pdf");
+                $this->mypdf->initialize(array('pdf_header_title' => 'Simple Ledger', 'pdf_header_string' => ($this->input->post('from') ? 'From : '.format_date($this->input->post('from')) : '').($this->input->post('to') ? ' - To : '.format_date($this->input->post('to')) : '') ));
+                //echo $this->view->load('pages/ledger/report_pdf', array('coas' => $coas), TRUE); die;
+                $this->mypdf->generate($this->view->load('pages/ledger/report_pdf', array('coas' => $coas), TRUE), "SimpLedLedger.pdf");
             }else{
                 redirect("{$this->template_url}ledger");
             }
