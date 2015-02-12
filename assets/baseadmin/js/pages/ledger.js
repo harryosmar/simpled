@@ -99,9 +99,11 @@ var ledger = {
             async: true,
             beforeSend: function() {
                 $('#loading-filter').show();
+                $('#export-btn').hide();
             },
             error: function(request) {
                 $('#loading-filter').hide();
+                $('#export-btn').hide();
                 console.log(request.responseText);
             },
             success: function(json) {
@@ -111,6 +113,14 @@ var ledger = {
                     $('#data-result').html('');
                     for(var key in json.data){
                         $('#data-result').append(json.data[key]['table']);
+                    }
+
+                    //show export button
+                    if(json.data.length > 0){
+                        $('#export-btn').show();
+                        $('#export-btn').find('a').each(function(){
+                            $(this).attr('href', $(this).attr('data-href')+'?'+decodeURIComponent($.param({'coa_id':$('[name=coa_id]').val(), 'from':$('#from').val(), 'to':$('#to').val()})));
+                        });
                     }
                 }else{
                     self.growl_msg(json.status, 'Error', json.msg);

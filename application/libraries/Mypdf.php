@@ -11,12 +11,12 @@ class Mypdf {
     private $pdf;
     private $pdf_header_title = 'PT.SEZ SMART CARD';
     private $pdf_header_string = '';
-    private $pdf_header_logo = 'tcpdf_logo.jpg';
+    private $pdf_header_logo = 'SimpLed.jpg';
     private $pdf_header_logo_width = '30';
-    private $def_author = 'PT.SEZ';
-    private $def_title = 'PT.SEZ Document';
-    private $def_subject = 'PT.SEZ Document';
-    private $def_keywords = 'PDF, Document, PT.SEZ, Procurement';
+    private $def_author = 'SimpLed';
+    private $def_title = 'SimpLed';
+    private $def_subject = 'SimpLed';
+    private $def_keywords = 'Simple, Ledger, SimpLed';
 
     public function __construct($config = array()) {
         // create new PDF document
