@@ -3,6 +3,10 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
+require 'vendor/autoload.php';
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
 /**
  * @author : Harry Osmar Sitohang
  * @date : 16 Sept 2014
@@ -10,6 +14,7 @@ if (!defined('BASEPATH'))
  */
 class Core extends CI_Controller {
 
+    protected $log;
     protected $class_name, $class_url;
     protected $_general_assets, $_general_assets_css, $_general_assets_js;
     protected $_assets, $_assets_css, $_assets_js;
@@ -19,7 +24,18 @@ class Core extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
+        $this->logChannel();
         $this->init();
+    }
+
+    protected function logChannel(){
+        // create a log channel
+        $this->log = new Logger('my_log');
+        $this->log->pushHandler(new StreamHandler(APPPATH.'logs/monolog.log', Logger::DEBUG)); //Logger::WARNING
+
+        // add records to the log
+        // $this->log->addWarning('Foo');
+        // $this->log->addError('Bar');
     }
 
     protected function init() {

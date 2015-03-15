@@ -78,6 +78,7 @@ class Currency extends Crud {
                 $this->db->delete($this->_table, array(
                     $this->primary_key => $primary_key
                 ));
+                $this->log->addInfo('delete '.$this->_table, array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
                 echo json_encode(array(
                     'status' => 'success',
                     'msg' => 'Successfully delete record',

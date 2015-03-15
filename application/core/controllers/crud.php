@@ -198,6 +198,7 @@ class Crud extends Datatable {
     }
 
     protected function on_sucess($action){
+        $this->log->addInfo($action.' '.$this->_table, array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
         switch ($action) {
             case 'delete':
                 return array(

@@ -88,6 +88,7 @@ class User extends Crud {
                 //Update database
                 $this->db->insert($this->_table, $_POST);
                 $insert_id = $this->db->insert_id();
+                $this->log->addInfo('add '.$this->_table, array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
 
                 //Return responce in json format
                 echo json_encode(array(
@@ -152,6 +153,7 @@ class User extends Crud {
 
                 //Update database
                 $this->db->update($this->_table, $_POST, array($this->primary_key => $this->input->post("{$this->primary_key}")));
+                $this->log->addInfo('edit '.$this->_table, array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
 
                 //Reset Session Data
                 if ($this->session_user->user_id == $this->input->post('user_id')) {
@@ -193,6 +195,7 @@ class User extends Crud {
             $this->db->update($this->_table, array(
                 'user_password' => $new_password
                     ), array($this->primary_key => $this->input->post("{$this->primary_key}")));
+            $this->log->addInfo('reset password '.$this->_table, array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
 
             //Reset Session Data
             if ($this->session_user->user_id == $this->input->post('user_id')) {

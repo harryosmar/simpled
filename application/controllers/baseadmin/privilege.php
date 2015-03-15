@@ -46,6 +46,7 @@ class Privilege extends Baseadmin {
             echo json_encode(array('status' => 'error', 'msg' => validation_errors('<p class="text-danger">', '</p>')));
         } else {
             $this->db->update("privilege", array('privilege_action' => $this->input->post("privilege_action")), array("user_group_id" => $this->input->post("user_group_id"), "menu_id" => $this->input->post("menu_id")));
+            $this->log->addInfo('set_privilege_per_user_group_per_menu ', array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
             echo json_encode(array("status" => "success", "msg" => "Successfully update your privilege"));
         }
     }
@@ -60,6 +61,7 @@ class Privilege extends Baseadmin {
             foreach ($privilege as $menu_id => $privilege_action) {
                 $this->db->update("privilege", array('privilege_action' => $privilege_action), array("user_group_id" => $this->input->post("user_group_id"), "menu_id" => $menu_id));
             }
+            $this->log->addInfo('set_privilege_per_user_group ', array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
             echo json_encode(array("status" => "success", "msg" => "Successfully update your privilege"));
         }
     }

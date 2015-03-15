@@ -98,7 +98,8 @@ class Posting extends  Datatable{
             $this->db->update('jurnal', array(
                 'posted' =>  $this->input->post('action') == 'posting' ? 'YES' : 'NO'
             ), array('transaction_id' => $this->input->post('transaction_id')));
-
+            $this->log->addInfo('posting single item', array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
+            
             echo json_encode(array(
                 'status' => 'success',
                 'msg'   => 'Successfully '.($this->input->post('action') == 'posting' ? 'Posted' : 'Unposted')
@@ -130,7 +131,7 @@ class Posting extends  Datatable{
             $this->db->update('jurnal', array(
                 'posted' =>  $this->input->post('action') == 'posting' ? 'YES' : 'NO'
             )); 
-
+            $this->log->addInfo('posting multiple item', array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
             echo json_encode(array(
                 'status' => 'success',
                 'msg'   => 'Successfully '.($this->input->post('action') == 'posting' ? 'Posted' : 'Unposted')

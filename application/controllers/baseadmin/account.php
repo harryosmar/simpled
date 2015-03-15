@@ -75,6 +75,7 @@ class Account extends Crud {
 
             //Update database
             $this->db->update($this->_table, $_POST, array($this->primary_key => $this->input->post("{$this->primary_key}")));
+            $this->log->addInfo('edit account ', array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
 
             //Reset Session Data
             if ($this->session_user->user_id == $this->input->post('user_id')) {
@@ -142,6 +143,8 @@ class Account extends Crud {
             $this->db->update($this->_table, array(
                 'user_password' => $new_password
                     ), array($this->primary_key => $this->input->post("{$this->primary_key}")));
+
+            $this->log->addInfo('reset password account', array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
 
             //Reset Session Data
             if ($this->session_user->user_id == $this->input->post('user_id')) {

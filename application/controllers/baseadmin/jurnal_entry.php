@@ -157,6 +157,7 @@ class Jurnal_entry extends  Datatable{
                 }
                 else{
                     $this->db->trans_commit();
+                    $this->log->addInfo('add jurnal', array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
                     echo json_encode(array('status'=>'success', 'msg' => 'Successfully add new jurnal'));
                 }
             }
@@ -234,6 +235,7 @@ class Jurnal_entry extends  Datatable{
             }
             else{
                 $this->db->trans_commit();
+                $this->log->addInfo('save header jurnal', array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
                 echo json_encode(array('status'=>'success', 'msg' => 'Successfully update jurnal'));
             }
         }
@@ -301,6 +303,7 @@ class Jurnal_entry extends  Datatable{
             }
             else{
                 $this->db->trans_commit();
+                $this->log->addInfo('save detail jurnal', array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
                 echo json_encode(array('status'=>'success', 'msg' => 'Successfully update jurnal'));
             }
         }
@@ -322,6 +325,7 @@ class Jurnal_entry extends  Datatable{
                 $this->db->delete('jurnal', array(
                     'transaction_id' => $primary_key
                 ));
+                $this->log->addInfo('delete jurnal', array('session' => $this->session->userdata('user'), 'query' => $this->db->last_query())); //record query in log data
                 echo json_encode(array(
                     'status' => 'success',
                     'msg' => 'Successfully delete record',
