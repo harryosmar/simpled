@@ -65,4 +65,4 @@ class View {
 }
 
 /* End of file view.php */
-/* Location: ./application/libraries/themes.php */
+/* Location: ./application/libraries/view.php */
