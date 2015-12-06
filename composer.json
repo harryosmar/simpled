@@ -1,0 +1,17 @@
+{
+    "name": "vagrant/simpled",
+    "authors": [
+        {
+            "name": "harry",
+            "email": "harryosmarsitohang@gmail.com"
+        }
+    ],
+    "require": {
+    	"php": ">=5.4"
+    },
+    "require-dev": {
+    	"phpunit/phpunit": "*",
+    	"phpunit/php-code-coverage": "*",
+    	"phpunit/phpunit-mock-objects": "*"
+    }
+}
