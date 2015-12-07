@@ -1,0 +1,9 @@
+<phpunit convertNoticesToExceptions="false" bootstrap="bootstrap.php" processIsolation="false" stopOnFailure="false" colors="true" verbose="true">
+    <testsuite name="unit">
+        <directory>./unit</directory>
+    </testsuite>
+    <logging>
+        <log type="testdox-html" target="reports/testdox.html" />
+        <log type="testdox-text" target="reports/testdox.txt" />
+    </logging>
+</phpunit>
