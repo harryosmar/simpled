@@ -1,2 +1,5 @@
 /license.txt
 /.DS_Store
+/vendor/
+/composer.lock
+/tests/reports/
