@@ -6,7 +6,7 @@ if (!defined('BASEPATH'))
 include_once APPPATH . 'libraries/crud/InterfaceCrud.php';
 
 abstract class AbstractCrud implements InterfaceCrud {
-
+	
     abstract public function edit($id);
 
     abstract public function add();

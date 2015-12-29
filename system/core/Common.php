@@ -374,6 +374,10 @@ if ( ! function_exists('set_status_header'))
 {
 	function set_status_header($code = 200, $text = '')
 	{
+		if (defined('PHPUNIT_TEST')){
+			return false;
+		}
+
 		$stati = array(
 							200	=> 'OK',
 							201	=> 'Created',
