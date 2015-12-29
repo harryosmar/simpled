@@ -1,4 +1,5 @@
 <?php
+namespace crud\field;
 
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
@@ -16,7 +17,7 @@ class ServiceField {
     private $enums = NULL;
 
 
-    public function __construct($config = array(), CI_Controller $CI = NULL){
+    public function __construct($config = array(), \CI_Controller $CI = NULL){
         if($CI === NULL){
             $this->CI = &get_instance();
         }else{

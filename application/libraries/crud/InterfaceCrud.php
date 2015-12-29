@@ -1,4 +1,5 @@
 <?php
+namespace crud;
 
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');

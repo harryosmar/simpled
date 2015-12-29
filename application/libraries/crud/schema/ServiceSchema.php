@@ -1,15 +1,17 @@
 <?php
+namespace crud\schema;
 
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-include_once APPPATH . 'libraries/crud/AbstractSchema.php';
-include_once APPPATH . 'libraries/crud/ServiceField.php';
+include_once __DIR__ . DIRECTORY_SEPARATOR . 'AbstractSchema.php';
+include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'field' . DIRECTORY_SEPARATOR . 'ServiceField.php';
 
+use \crud\field\ServiceField;
 
 class ServiceSchema extends AbstractSchema {
 
-	public function __construct($config = array(), CI_Controller $CI = NULL){
+	public function __construct($config = array(), \CI_Controller $CI = NULL){
 		if($CI === NULL){
             $this->CI = &get_instance();
         }else{
@@ -57,10 +59,10 @@ class ServiceSchema extends AbstractSchema {
 		foreach ($fields as $index_field => $field) {
 			$field = (array)$field;
 			$field['table_name'] = $this->table_name;
-            $field['label'] = ucwords(preg_replace("/_/", " ", $field->name));
+            $field['label'] = ucwords(preg_replace("/_/", " ", $field['name']));
             $field['targets'] = $index_field;
 
-			$this->fields[$field->name] = new ServiceField($field, $this->CI);
+			$this->fields[$field['name']] = new ServiceField($field, $this->CI);
 
 			return $this->fields;
 		}

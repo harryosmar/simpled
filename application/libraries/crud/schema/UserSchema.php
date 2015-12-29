@@ -1,9 +1,10 @@
 <?php
+namespace crud\schema;
 
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-include_once APPPATH . 'libraries/crud/ServiceSchema.php';
+include_once __DIR__ . DIRECTORY_SEPARATOR . 'ServiceSchema.php';
 
 class UserSchema extends ServiceSchema {
 
