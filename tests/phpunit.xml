@@ -1,7 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <phpunit convertNoticesToExceptions="false" bootstrap="bootstrap.php" processIsolation="false" stopOnFailure="false" colors="true" verbose="true">
     <testsuite name="unit">
         <directory>./unit</directory>
     </testsuite>
+    <php>
+        <const name="PHPUNIT_TEST" value="1" />
+        <const name="PHPUNIT_CHARSET" value="UTF-8" />
+    </php>
     <logging>
         <log type="testdox-html" target="reports/testdox.html" />
         <log type="testdox-text" target="reports/testdox.txt" />

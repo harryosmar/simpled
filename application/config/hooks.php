@@ -9,12 +9,12 @@
 |	http://codeigniter.com/user_guide/general/hooks.html
 |
 */
-$hook['display_override'] = array(
-	'class' => 'DisplayHook',
-	'function' => 'captureOutput',
-	'filename' => 'DisplayHook.php',
-	'filepath' => 'hooks'
-);
+// $hook['display_override'] = array(
+// 	'class' => 'DisplayHook',
+// 	'function' => 'captureOutput',
+// 	'filename' => 'DisplayHook.php',
+// 	'filepath' => 'hooks'
+// );
 
 
 /* End of file hooks.php */

@@ -310,6 +310,13 @@ class CI_Input {
 	*/
 	public function ip_address()
 	{
+		
+		if (defined('PHPUNIT_TEST'))
+ 		{
+ 			$this->ip_address = '0.0.0.0';
+ 			return $this->ip_address;
+ 		}
+
 		if ($this->ip_address !== FALSE)
 		{
 			return $this->ip_address;
