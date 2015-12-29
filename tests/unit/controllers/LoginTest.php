@@ -1,5 +1,8 @@
 <?php
 namespace unit\controllers;
+
+include_once 'unit' . DS . 'BaseTest.php';
+
 use Login;
 
 class LoginTest extends \unit\BaseTest

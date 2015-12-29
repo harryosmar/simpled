@@ -1,2 +1,5 @@
 #How to run phpunit
 /var/www/simpled$ vendor/phpunit/phpunit/phpunit -c tests/ --debug
+
+#Run single php unit file
+vendor/phpunit/phpunit/phpunit -c tests/ tests/unit/libraries/crud/field/FieldServiceTest.php --debug

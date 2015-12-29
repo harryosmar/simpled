@@ -1,6 +1,8 @@
 <?php
 namespace unit\controllers;
 
+include_once 'unit' . DS . 'BaseTest.php';
+
 // require_once(APPPATH.'controllers/baseadmin/Privilege.php');
 // use Privilege;
 

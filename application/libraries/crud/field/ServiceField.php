@@ -48,7 +48,16 @@ class ServiceField {
             }
         }
 
+        //if type is enum, then get enum values
+        if($this->type == 'enum'){
+            $this->enums = array_merge(["Select..." => ""], $this->get_enum_values());
+        }
+
         return $this;
+    }
+
+    public function getAttribute($attribute_name){
+        return property_exists($this, $attribute_name) ? $this->{$attribute_name} : NULL;
     }
 
     /**
@@ -60,7 +69,6 @@ class ServiceField {
     public function set_type($type){
         if (preg_match("/^(enum)$/i", $type)) {
             $this->type = "enum";
-            $this->enums = array_merge(array("Select..." => ""), $this->get_enum_values($this->name));
         } else if (preg_match("/^(date)$/i", $type)) {
             $this->type = "date";
         } else if (preg_match("/^(datetime|timestamp)$/i", $type)) {
@@ -75,7 +83,7 @@ class ServiceField {
      * @param $field field-name that have type 'enum'
      * @return enumeration value list from a field
      */
-    private function get_enum_values() {
+    public function get_enum_values() {
         $type = $this->CI->db->query("SHOW COLUMNS FROM `{$this->table_name}` WHERE Field = '{$this->name}'")->row()->Type;
         preg_match('/^enum\((.*)\)$/', $type, $matches);
         

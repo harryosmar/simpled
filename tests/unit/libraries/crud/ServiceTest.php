@@ -1,6 +1,7 @@
 <?php
 namespace unit\crud;
 
+include_once 'unit' . DS . 'BaseTest.php';
 include_once APPPATH . 'libraries/crud/ServiceCrud.php';
 include_once APPPATH . 'libraries/crud/schema/ServiceSchema.php';
 include_once APPPATH . 'libraries/crud/schema/UserSchema.php';

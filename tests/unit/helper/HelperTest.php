@@ -1,6 +1,8 @@
 <?php
 namespace unit\helper;
 
+include_once 'unit' . DS . 'BaseTest.php';
+
 class HelperTest extends \unit\BaseTest
 {
     public function test_create_form_dropdown_options()
